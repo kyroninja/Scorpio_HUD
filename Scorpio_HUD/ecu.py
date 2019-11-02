@@ -1,8 +1,6 @@
 #import modules
 import obd
 from threading import Thread
-import random
-import time
 
 #globals
 rpm = 0
@@ -28,7 +26,7 @@ class ecuThread(Thread):
 
     def run(self):
         global connection
-        port = "/dev/vcom0"
+        port = "/home/pi/wifiserial"
         baudrate = 115200
         
         connection = obd.Async(port, baudrate, fast = False)
@@ -50,7 +48,7 @@ class ecuThread(Thread):
         #manifold pressure
         connection.watch(obd.commands.INTAKE_PRESSURE, callback=self.newManPr)
         #fuel pressure
-        connection.watch(obd.commands.FUEL_PRESSURE, callback=self.newFuelPress)
+        connection.watch(obd.commands.FUEL_RAIL_PRESSURE_DIRECT, callback=self.newFuelPress)
         #engine load
         connection.watch(obd.commands.ENGINE_LOAD, callback=self.newLoad)
 
@@ -96,35 +94,3 @@ class ecuThread(Thread):
     def newLoad(self, r):
         global engineLoad
         engineLoad = int(round(r.value.magnitude))
-
-class Test(Thread):
-    def __init__(self):
-        Thread.__init__(self)
-        self.daemon = True
-        self.start()
-    def run(self):
-        global rpm
-        global speed
-        global coolantTemp
-        global intakeTemp
-        global maf
-        global engineLoad
-        global voltage
-        global fuelPress
-        global barometricPressure
-        global boostPressure
-        global manpress
-
-        while True:
-            rpm = random.randrange(1, 50)
-            speed = random.randrange(1, 50)
-            coolantTemp = random.randrange(1, 50)
-            intakeTemp = random.randrange(1, 50)
-            maf = random.randrange(1, 50)
-            engineLoad = random.randrange(1, 50)
-            voltage = random.randrange(1, 50)
-            fuelPress = random.randrange(1, 50)
-            barometricPressure = random.randrange(1, 50)
-            boostPressure = random.randrange(1, 50)
-            manpress = random.randrange(1, 50)
-            time.sleep(0.2)
